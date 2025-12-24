@@ -1,0 +1,46 @@
+/remittance
+├── composer.json              # Gestione dipendenze (Google Client, Dotenv, ecc.)
+├── .env                       # Variabili d'ambiente (DB credenziali, Gmail pass, percorsi)
+├── .env.example
+├── cli/                       # Script da eseguire via riga di comando (Cron)
+│   └── process_emails.php     # Lo script schedulato ogni 5 minuti
+├── config/
+│   ├── database.php           # Connessione PDO a PostgreSQL
+│   ├── google.php             # Configurazione Google Sheets
+│   └── mail.php               # Configurazione IMAP Gmail
+├── logs/                      # File di log (errori, esecuzioni)
+│   └── app.log
+├── public/                    # Document Root del web server
+│   ├── index.php              # Entry point dell'applicazione web
+│   ├── assets/                # CSS, JS, Immagini
+│   └── .htaccess              # Routing (se usi Apache)
+├── src/
+│   ├── Controllers/           # Logica per la Dashboard
+│   │   ├── AuthController.php
+│   │   ├── DashboardController.php
+│   │   └── AdminController.php
+│   ├── Models/                # Interazione con il DB
+│   │   ├── User.php
+│   │   ├── Supplier.php
+│   │   ├── Document.php       # Fatture e Note di Credito
+│   │   └── Transaction.php    # Singole righe di pagamento/storno
+│   ├── Services/              # Logica di business complessa
+│   │   ├── ImapService.php    # Connessione e lettura Gmail
+│   │   ├── ParserService.php  # Parsing del testo delle email (Regex, pulizia dati)
+│   │   ├── GoogleSheetService.php # Scrittura su Fogli Google
+│   │   └── LoggerService.php  # Gestione log su file/db
+│   └── Core/                  # Componenti base
+│       ├── Router.php
+│       ├── Database.php
+│       └── Session.php
+└── views/                     # Template HTML (PHP puro o Twig)
+    ├── auth/
+    │   └── login.php
+    ├── dashboard/
+    │   ├── index.php
+    │   └── supplier_detail.php
+    ├── admin/
+    │   └── suppliers_config.php
+    └── layouts/
+        ├── header.php
+        └── footer.php

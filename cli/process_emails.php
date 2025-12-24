@@ -20,6 +20,7 @@ try {
     $pdo = Database::getConnection();
     $imapService = new ImapService();
     $parserService = new ParserService();
+	$googleService = new GoogleSheetService();
 
     // 2. Determina da quando cercare le email
     // Cerchiamo la data dell'ultima email processata con successo
@@ -139,11 +140,25 @@ try {
                 ]);
             }
 
-            // TODO: Qui chiameremo il GoogleSheetService per aggiornare i fogli
-            // $googleService->updateSheet($supplierId, $transactions);
+            echo "Aggiornamento Fogli Google...\n";
+            
+            // Recuperiamo i dati del fornitore completi (inclusi ID fogli)
+            $stmtGetSupplier = $pdo->prepare("SELECT * FROM suppliers WHERE id = :id");
+            $stmtGetSupplier->execute(['id' => $supplierId]);
+            $supplierData = $stmtGetSupplier->fetch();
+
+            // Prepariamo l'array di transazioni arricchito con la data di pagamento globale della mail
+            // (necessaria perché la singola riga parsata potrebbe non averla, ma il servizio Google la richiede)
+            $transactionsForGoogle = [];
+            foreach ($transactions as $t) {
+                $t['payment_date'] = $meta['payment_date_sql'] ?? date('Y-m-d');
+                $transactionsForGoogle[] = $t;
+            }
+
+            $googleService->updateSupplierSheets($supplierData, $transactionsForGoogle);
 
             $pdo->commit();
-            echo "OK (Salvato DB).\n";
+            echo "OK (Salvato DB e Aggiornato Sheets).\n";
 
         } catch (Exception $e) {
             $pdo->rollBack();

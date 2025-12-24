@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+    # Abilita il motore di riscrittura URL
+    RewriteEngine On
+
+    # Disabilita la negoziazione automatica dei contenuti (evita conflitti es. /login vs login.php)
+    Options -Multiviews
+
+    # Se la richiesta non punta a una cartella esistente...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # ...e non punta a un file esistente...
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    # ...reindirizza tutto a index.php mantenendo la query string (QSA)
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Previene la visualizzazione dell'elenco dei file nelle cartelle (sicurezza)
+Options -Indexes
