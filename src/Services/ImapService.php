@@ -9,12 +9,12 @@ use Exception;
 class ImapService
 {
     private Mailbox $mailbox;
-    private string $searchSubject = 'Remittance Advice - ON LINE PLATFORM FOR';
+    private string $searchSubject = 'Remittance Advice - ';
 
     public function __construct()
     {
         // Recupera credenziali dal file .env
-        $host = $_ENV['IMAP_HOST'] ?? '{imap.gmail.com:993/imap/ssl}INBOX';
+        $host = $_ENV['IMAP_HOST'] ?? '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
         $user = $_ENV['IMAP_USER'];
         $password = $_ENV['IMAP_PASSWORD'];
 

@@ -46,11 +46,18 @@ try {
     $router->post('/login', [\App\Controllers\AuthController::class, 'authenticate']);
     $router->get('/logout', [\App\Controllers\AuthController::class, 'logout']);
 
-    // Dashboard & Fornitori
-    $router->get('/dashboard', [\App\Controllers\SupplierController::class, 'index']);
-    $router->get('/suppliers', [\App\Controllers\SupplierController::class, 'index']);
-    $router->get('/suppliers/edit', [\App\Controllers\SupplierController::class, 'edit']);
-    $router->post('/suppliers/update', [\App\Controllers\SupplierController::class, 'update']);
+	// Dashboard & Navigazione
+	$router->get('/dashboard', [\App\Controllers\DashboardController::class, 'index']);
+
+	// Dettagli (Drill-down)
+	$router->get('/remittance', [\App\Controllers\DashboardController::class, 'viewRemittance']); // ?id=...
+	$router->get('/supplier', [\App\Controllers\DashboardController::class, 'viewSupplier']);     // ?id=...
+	$router->get('/document', [\App\Controllers\DashboardController::class, 'viewDocument']);     // ?id=...
+
+	// Gestione Fornitori (Configurazione)
+	$router->get('/suppliers', [\App\Controllers\SupplierController::class, 'index']);
+	$router->get('/suppliers/edit', [\App\Controllers\SupplierController::class, 'edit']);
+	$router->post('/suppliers/update', [\App\Controllers\SupplierController::class, 'update']);
 
     // 7. RISOLVI LA RICHIESTA
     $router->resolve();

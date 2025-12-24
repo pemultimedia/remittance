@@ -7,6 +7,7 @@ use App\Services\ImapService;
 use App\Services\ParserService;
 use App\Core\Database;
 use Dotenv\Dotenv;
+use App\Services\GoogleSheetService;
 
 // 1. Inizializzazione Ambiente
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');

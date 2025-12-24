@@ -10,10 +10,27 @@ class Supplier {
         return $stmt->fetchAll();
     }
 
-    public static function find($id) {
+    public static function find($id, $userId = null, $role = 'admin') {
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT * FROM suppliers WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+        
+        $sql = "SELECT s.* FROM suppliers s ";
+        
+        // Se specificato un utente NON admin, controlla i permessi
+        if ($userId && $role !== 'admin') {
+            $sql .= " JOIN user_suppliers us ON s.id = us.supplier_id 
+                      WHERE s.id = :id AND us.user_id = :uid";
+        } else {
+            $sql .= " WHERE s.id = :id";
+        }
+
+        $stmt = $pdo->prepare($sql);
+        
+        $params = ['id' => $id];
+        if ($userId && $role !== 'admin') {
+            $params['uid'] = $userId;
+        }
+
+        $stmt->execute($params);
         return $stmt->fetch();
     }
 

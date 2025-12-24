@@ -31,28 +31,34 @@ class ParserService
     }
 
     /**
-     * Estrae i dati di testata usando Regex sul testo (più sicuro per etichette fisse)
+     * Estrae i dati di testata usando Regex sul testo
      */
     private function extractMetadata(string $html): array
     {
-        // Rimuoviamo i tag HTML per facilitare le regex sui metadati
-        $text = strip_tags($html);
+        // 1. Pre-pulizia: Sostituiamo i tag che mandano a capo con un vero \n
+        // Altrimenti strip_tags unisce "Nome Srl" e "Our Supplier No" in "Nome SrlOur Supplier No"
+        $htmlWithBreaks = str_ireplace(['<br>', '<br/>', '<br />', '</p>', '</tr>', '</div>'], "\n", $html);
+        
+        // 2. Rimuoviamo i tag HTML rimanenti
+        $text = strip_tags($htmlWithBreaks);
         
         $data = [];
 
-        // Regex patterns basati sugli esempi forniti
+        // Regex patterns aggiornati
+        // Per 'supplier_name', ci fermiamo al primo "a capo" (\n|\r) OPPURE se incontriamo "Our Supplier No"
         $patterns = [
-            'supplier_name' => '/Payment made to:\s*(.*?)(?:\n|\r)/i',
+            'supplier_name' => '/Payment made to:\s*(.*?)(?:\n|\r|Our Supplier No)/i',
             'supplier_no' => '/Our Supplier No:\s*(\d+)/i',
             'site_name' => '/Supplier Site Name:\s*(\w+)/i',
             'payment_number' => '/Payment number\s*:\s*(\d+)/i',
-            'payment_date' => '/Payment Date\s*:\s*([\d\-A-Z]+)/i', // Es. 18-DEC-2025
+            'payment_date' => '/Payment Date\s*:\s*([\d\-A-Z]+)/i',
             'currency' => '/Payment currency:\s*([A-Z]{3})/i',
             'total_amount' => '/Payment Amount\s*:\s*([\d\.,]+)/i'
         ];
 
         foreach ($patterns as $key => $pattern) {
             if (preg_match($pattern, $text, $matches)) {
+                // Trim per rimuovere spazi extra o caratteri invisibili rimasti
                 $data[$key] = trim($matches[1]);
             } else {
                 $data[$key] = null;
