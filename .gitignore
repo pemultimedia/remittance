@@ -1,0 +1,21 @@
+# Dipendenze Composer
+/vendor/
+
+# File di configurazione ambiente (contengono password!)
+.env
+
+# Credenziali Google (JSON scaricato dalla console Google Cloud)
+config/google-credentials.json
+
+# Log dell'applicazione
+logs/*.log
+logs/attachments/
+
+# File di sistema e IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Cartelle temporanee (se ne creerai)
+tmp/
